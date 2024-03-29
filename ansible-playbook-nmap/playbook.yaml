@@ -1,0 +1,26 @@
+---
+- name: nmap target hosts
+  hosts: localhost
+  become: true
+  tasks:
+
+  - name: nmap install
+    apt:
+     name: nmap
+     state: latest
+     update_cache: true
+
+  - name: targets copy
+    copy:
+     src: ./targets.txt
+     dest: ~/targets.txt
+     force: yes
+     mode: 0644
+
+  - name: nmap run
+    shell: "nmap -iL targets.txt -p 80 -oG -"
+    register: output_nmap
+
+  - name: output print
+    debug:
+      msg: "{{ output_nmap.stdout_lines }}"
